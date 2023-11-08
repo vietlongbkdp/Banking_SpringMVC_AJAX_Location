@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>List of customers</title>
+    <th:block th:replace="layout/head" />
+</head>
+<body>
+        <div class="container">
+            <header>
+                <nav class="navbar bg-body-tertiary">
+                    <div class="container-fluid">
+                        <a class="navbar-brand">List of customers</a>
+                        <div class="d-flex" style="gap: 10px;">
+                            <button class="btn btn-outline-light" type="button">
+                                <i class="fas fa-history"></i>
+                                Transfer histories
+                            </button>
+                            <button type="button" class="btn btn-outline-light" data-bs-toggle="modal"
+                                    data-bs-target="#modalCreate">
+                                <i class="far fa-plus-square"></i>
+                                Add new customer
+                            </button>
+                        </div>
+                    </div>
+                </nav>
+            </header>
+
+            <div class="content">
+                <table id="tbCustomer" class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>FullName</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Address</th>
+                        <th>Balance</th>
+                        <th colspan="5">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="loading" class="sk-chase hide">
+            <div class="sk-chase-dot"></div>
+            <div class="sk-chase-dot"></div>
+            <div class="sk-chase-dot"></div>
+            <div class="sk-chase-dot"></div>
+            <div class="sk-chase-dot"></div>
+            <div class="sk-chase-dot"></div>
+        </div>
+
+
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div id="liveToast" class="toast align-items-center text-bg-primary border-0" role="alert" aria-live="assertive"
+                 aria-atomic="true">
+                <div class="d-flex">
+                    <div id="toast-body" class="toast-body">
+                    </div>
+                    <button type="button" id="btnCloseToast" class="btn-close btn-close-white me-2 m-auto"
+                            data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+        <!-- Modal Create -->
+        <th:block th:replace="customer/modalCreate" />
+
+        <!-- Modal Update -->
+        <th:block th:replace="customer/modalUpdate" />
+<script src="/assets/js/mainList.js"></script>
+</body>
+</html>
