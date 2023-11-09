@@ -13,4 +13,6 @@ public interface ICustomerService extends IGeneralService<Customer, Long> {
     void deposit(Deposit deposit);
     void withdraw(Withdraw withdraw);
     void transfer(Transfer transfer);
+
+    void create(Customer customer);
 }

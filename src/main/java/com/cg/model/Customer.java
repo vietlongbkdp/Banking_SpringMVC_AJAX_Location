@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -13,6 +14,7 @@ import java.math.BigDecimal;
 @Setter
 @Entity
 @Table(name = "customers")
+@Accessors(chain = true)
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,6 +33,7 @@ public class Customer {
     @Column(columnDefinition = "decimal(10,0) default 0", nullable = false, updatable = false)
     private BigDecimal balance = BigDecimal.ZERO;
 
+    @Column(columnDefinition = "boolean default false")
     private Boolean deleted;
 
 }

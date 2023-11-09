@@ -1,10 +1,9 @@
 package com.cg.service.customerService;
 
-import com.cg.model.Customer;
-import com.cg.model.Deposit;
-import com.cg.model.Transfer;
-import com.cg.model.Withdraw;
+import com.cg.model.*;
+import com.cg.model.dto.LocationRegionCreDTO;
 import com.cg.repository.CustomerRepository;
+import com.cg.repository.LocationRegionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,24 +15,27 @@ import java.util.Optional;
 public class CustomerService implements ICustomerService{
     @Autowired
     private CustomerRepository customerRepository;
+    @Autowired
+    private LocationRegionRepository locationRegionRepository;
     @Override
     public List<Customer> findAll() {
-        return null;
+        return customerRepository.findAll();
     }
 
     @Override
     public Optional<Customer> findById(Long id) {
-        return Optional.empty();
+
+        return customerRepository.findById(id);
     }
 
     @Override
     public void save(Customer customer) {
-
+        customerRepository.save(customer);
     }
 
     @Override
     public void update(Customer customer) {
-
+        customerRepository.save(customer);
     }
 
     @Override
@@ -43,7 +45,8 @@ public class CustomerService implements ICustomerService{
 
     @Override
     public List<Customer> findAllByIdNot(Long id) {
-        return null;
+
+        return customerRepository.findAllByIdNot(id);
     }
 
     @Override
@@ -59,5 +62,13 @@ public class CustomerService implements ICustomerService{
     @Override
     public void transfer(Transfer transfer) {
 
+    }
+
+    @Override
+    public void create(Customer customer) {
+        LocationRegion locationRegion = customer.getLocationRegion();
+        locationRegionRepository.save(locationRegion);
+        customer.setLocationRegion(locationRegion);
+        customerRepository.save(customer);
     }
 }

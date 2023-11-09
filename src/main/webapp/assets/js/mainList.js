@@ -23,6 +23,7 @@ page.elements.btnCreate = $('#btnCreate');
 page.elements.bodyCustomer = $('#tbCustomer tbody')
 
 page.elements.loading = $('#loading');
+page.elements.footer = $('footer')
 
 page.elements.toastLive = $('#liveToast')
 page.elements.toastBody = $('#toast-body')
@@ -40,54 +41,53 @@ async function fetchALlPerson() {
     })
 }
 
-const getALlPerson = async () => {
+page.commands.getALlPerson = async () => {
     const persons = await fetchALlPerson();
 
     persons.forEach(item => {
-        const str = renderPerson(item)
-        bodyCustomer.prepend(str);
+        const str = page.commands.renderPerson(item)
+       page.elements.bodyCustomer.prepend(str);
     });
-
-    const btnEditElems = document.querySelectorAll('.edit')
-
-    btnEditElems.forEach(item => {
-        item.addEventListener('click', async () => {
-            // const id = item.id.replace('data_', '')
-            personId = item.getAttribute('data-id')
-
-            const person = await getPersonById(personId);
-            // console.log(person);
-
-            // openModal('modalUpdate')
-            $('#modalUpdate').modal('show')
-
-            document.getElementById('fullNameUp').value = person.fullName
-            document.getElementById('emailUp').value = person.email
-            document.getElementById('phoneUp').value = person.phone
-            document.getElementById('addressUp').value = person.address
-
-        })
-    })
-
-    const btnDepositElems = $('.deposit')
-
-    $.each(btnDepositElems, (index, item) => {
-        $(item).on('click', async () => {
-            personId = $(item).data('id')
-
-            console.log(personId);
-
-        })
-    })
+    // const btnEditElems = document.querySelectorAll('.edit')
+    //
+    // btnEditElems.forEach(item => {
+    //     item.addEventListener('click', async () => {
+    //         // const id = item.id.replace('data_', '')
+    //         personId = item.getAttribute('data-id')
+    //
+    //         const person = await getPersonById(personId);
+    //         // console.log(person);
+    //
+    //         // openModal('modalUpdate')
+    //         $('#modalUpdate').modal('show')
+    //
+    //         document.getElementById('fullNameUp').value = person.fullName
+    //         document.getElementById('emailUp').value = person.email
+    //         document.getElementById('phoneUp').value = person.phone
+    //         document.getElementById('addressUp').value = person.address
+    //
+    //     })
+    // })
+    //
+    // const btnDepositElems = $('.deposit')
+    //
+    // $.each(btnDepositElems, (index, item) => {
+    //     $(item).on('click', async () => {
+    //         personId = $(item).data('id')
+    //
+    //         console.log(personId);
+    //
+    //     })
+    // })
 }
 
-const getPersonById = async (personId) => {
+page.commands.getPersonById = async (personId) => {
     const response = await fetch("http://localhost:8080/api/customers/" + personId);
     const person = await response.json();
     return person
 }
 
-const fetchUpdatePerson = async (personId, obj) => {
+page.commands.fetchUpdatePerson = async (personId, obj) => {
     const response = await fetch("http://localhost:8080/api/customers/" + personId, {
         method: 'PATCH',
         headers: {
@@ -99,66 +99,76 @@ const fetchUpdatePerson = async (personId, obj) => {
     return person
 }
 
-const renderPerson = (obj) => {
+page.commands.renderPerson = (obj) => {
     return `
                     <tr id="tr_${obj.id}">
+                        <td><span></span></td>
                         <td>${obj.id}</td>
                         <td>${obj.fullName}</td>
                         <td>${obj.email}</td>
                         <td>${obj.phone}</td>
-                        <td>${obj.address}</td>
+                        <td>${obj.locationRegion.provinceName}</td>
+                        <td>${obj.locationRegion.districtName}</td>
+                        <td>${obj.locationRegion.wardName}</td>
+                        <td>${obj.locationRegion.address}</td>
                         <td>${obj.balance}</td>
-                        <td>
-                            <button class="btn btn-outline-secondary edit" id="data_${obj.id}" data-id="${obj.id}">
-                                <i class="far fa-edit"></i>
-                            </button>
-                        </td>
-                        <td>
-                            <button class="btn btn-outline-success deposit" data-id="${obj.id}">
-                                <i class="fas fa-plus"></i>
-                            </button>
-                        </td>
-                        <td>
-                            <button class="btn btn-outline-warning">
-                                <i class="fas fa-minus"></i>
-                            </button>
-                        </td>
-                        <td>
-                            <button class="btn btn-outline-primary">
-                                <i class="fas fa-exchange-alt"></i>
-                            </button>
-                        </td>
-                        <td>
-                            <button class="btn btn-outline-danger">
-                                <i class="fas fa-ban"></i>
-                            </button>
-                        </td>
+<!--                        <td>-->
+<!--                            <button class="btn btn-outline-secondary edit">-->
+<!--                                <i class="far fa-edit"></i>-->
+<!--                            </button>-->
+<!--                        </td>-->
+<!--                        <td>-->
+<!--                            <button class="btn btn-outline-success deposit">-->
+<!--                                <i class="fas fa-plus"></i>-->
+<!--                            </button>-->
+<!--                        </td>-->
+<!--                        <td>-->
+<!--                            <button class="btn btn-outline-warning">-->
+<!--                                <i class="fas fa-minus"></i>-->
+<!--                            </button>-->
+<!--                        </td>-->
+<!--                        <td>-->
+<!--                            <button class="btn btn-outline-primary">-->
+<!--                                <i class="fas fa-exchange-alt"></i>-->
+<!--                            </button>-->
+<!--                        </td>-->
+<!--                        <td>-->
+<!--                            <button class="btn btn-outline-danger">-->
+<!--                                <i class="fas fa-ban"></i>-->
+<!--                            </button>-->
+<!--                        </td>-->
                     </tr>
                 `
 }
 
 
-$('#modalCreate').on('hidden.bs.modal', () => {
+page.elements.modalCreate.on('hidden.bs.modal', () => {
     $('#frmCreate').trigger('reset')
     $('#frmCreate input').removeClass('error')
     $('#frmCreate label.error').remove()
 })
 
-$('#frmCreate').validate({
+page.elements.frmCreate.validate({
     rules: {
         fullNameCre: {
             required: true
         },
         addressCre: {
             required: true
+        },
+        emailCre: {
+            required: true
         }
     },
     messages: {
         fullNameCre: {
-            required: 'FullName is required'
+            required: 'FullName không được để trống !'
         },
         addressCre: {
-            required: 'Address is required'
+            required: 'Địa chỉ không được để trống !'
+        },
+        emailCre: {
+            required: 'Email không được để trống !'
         }
     },
     errorLabelContainer: "#modalCreate .area-error",
@@ -180,25 +190,38 @@ $('#frmCreate').validate({
 })
 
 const createCustomer = () => {
-    const fullName = $('#fullNameCre').val()
-    const email = $('#emailCre').val()
-    const phone = $('#phoneCre').val()
-    const address = $('#addressCre').val()
-    const balance = 0
-    const deleted = 0
+    const provinceId = page.elements.provinceCre.val();
+    const provinceName = page.elements.provinceCre.find('option:selected').text();
+    const districtId = page.elements.districtCre.val();
+    const districtName = page.elements.districtCre.find('option:selected').text();
+    const wardId = page.elements.wardCre.val();
+    const wardName = page.elements.wardCre.find('option:selected').text();
+    const address = page.elements.addressCre.val();
+
+    const fullName = page.elements.fullNameCre.val()
+    const email = page.elements.emailCre.val()
+    const phone = page.elements.phoneCre.val()
+
+    const locationRegion = {
+        provinceId,
+        provinceName,
+        districtId,
+        districtName,
+        wardId,
+        wardName,
+        address,
+    }
 
     const obj = {
         fullName,
         email,
         phone,
-        address,
-        balance,
-        deleted
+        locationRegion,
     }
 
-    btnCreate.prop("disabled", true);
+    page.elements.btnCreate.prop("disabled", true);
 
-    loading.removeClass('hide')
+    page.elements.loading.removeClass('hide')
 
     setTimeout(() => {
         $.ajax(
@@ -213,15 +236,15 @@ const createCustomer = () => {
         )
             .done((data) => {
                 const str = renderPerson(data)
-                bodyCustomer.prepend(str);
+                page.elements.bodyCustomer.prepend(str);
 
                 closeModal('modalCreate')
 
-                toastBody.text('Thêm mới thành công')
+                page.elements.toastBody.text('Thêm mới thành công')
                 toastBootstrap.show()
 
                 setTimeout(() => {
-                    btnCloseToast.click()
+                    page.elements.btnCloseToast.click()
                 }, 2000);
             })
             .fail((err) => {
@@ -239,16 +262,39 @@ const createCustomer = () => {
                 }
             })
             .always(() => {
-                btnCreate.prop("disabled", false);
-                loading.addClass('hide')
+                page.elements.btnCreate.prop("disabled", false);
+                page.elements.loading.addClass('hide')
             });
-    }, 2000);
+    }, 1000);
 }
 
 page.elements.btnCreate.on('click', async () => {
     page.elements.frmCreate.trigger('submit')
 })
-
+page.commands.renderFooter = () => {
+    return `
+                <button class="btn btn-secondary edit">
+                    <i class="far fa-edit"></i>
+                    Update
+                </button>
+                <button class="btn btn-success deposit">
+                    <i class="fas fa-plus"></i>
+                    Deposit
+                </button>
+                <button class="btn btn-warning">
+                    <i class="fas fa-minus"></i>
+                    Withdraw
+                </button>
+                <button class="btn btn-primary">
+                    <i class="fas fa-exchange-alt"></i>
+                    Transfer
+                </button>
+                <button class="btn btn-danger">
+                    <i class="fas fa-ban"></i>
+                    Inactive
+                </button>
+            `
+}
 btnUpdate.on('click', async () => {
     const fullName = document.getElementById('fullNameUp').value
     const email = document.getElementById('emailUp').value
@@ -270,7 +316,7 @@ btnUpdate.on('click', async () => {
 
     closeModal('modalUpdate')
 
-    toastBody.text('Cập nhật thông tin thành công')
+    page.elements.toastBody.text('Cập nhật thông tin thành công')
     toastBootstrap.show()
 
     const btnEditElems = $('.edit')
@@ -330,7 +376,6 @@ function closeModal(elem) {
 }
 
 
-getALlPerson()
 
 
 page.commands.getAllProvinces = () => {
@@ -392,22 +437,69 @@ page.elements.provinceCre.on('change', function () {
         page.commands.getAllWards(districtId)
     })
 })
+page.commands.handleClickRow = () => {
+    $('#tbCustomer tbody tr td').on('click', function () {
+        $('#tbCustomer tbody tr td span').removeClass('selected')
+        personId = $(this).parent().attr('id').replace('tr_', '')
+
+        const elem = $(this).parent().find('td')[0]
+
+        const span = $(elem).find('span')
+        $(span).addClass('selected')
+
+        const str = page.commands.renderFooter()
+        page.elements.footer.html(str)
+
+        page.commands.handleClickEditButton()
+    })
+}
+page.commands.handleClickEditButton = () => {
+    $('footer button.edit').on('click', () => {
+        page.loadData.getCustomerById();
+    })
+}
+page.loadData.getCustomerById = async () => {
+    $.ajax({
+        url: page.url.getCustomerById + customerId,
+    })
+        .done(async (data) => {
+            page.elements.fullNameUp.val(data.fullName)
+            page.elements.emailUp.val(data.email)
+            page.elements.phoneUp.val(data.phone)
+            page.elements.provinceUp.val(data.locationRegion.provinceId)
+
+            await page.commands.getAllDistricts(data.locationRegion.provinceId, page.elements.districtUp)
+
+            await page.commands.getAllWards(data.locationRegion.districtId, page.elements.wardUp)
+
+            page.elements.modalUpdate.modal('show');
+        })
+        .fail((err) => {
+
+        })
+}
 
 page.elements.districtCre.on('change',  function () {
     const districtId = $(this).val()
 
     page.commands.getAllWards(districtId)
 })
+$.ajaxSetup({
+    headers: {
+        "Content-type": "application/json; charset=UTF-8"
+    }
+})
+$(async () => {
+    await page.commands.getALlPerson()
 
+    await page.commands.getAllProvinces();
 
-$(() => {
-    page.commands.getAllProvinces().then(() => {
-        const provinceId = page.elements.provinceCre.find('option:selected').val()
+    const provinceId = page.elements.provinceCre.find('option:selected').val()
 
-        page.commands.getAllDistricts(provinceId).then(() => {
-            const districtId = page.elements.districtCre.find('option:selected').val()
+    await page.commands.getAllDistricts(provinceId, page.elements.districtCre);
 
-            page.commands.getAllWards(districtId)
-        })
-    })
+    const districtId = page.elements.districtCre.find('option:selected').val()
+
+    page.commands.getAllWards(districtId, page.elements.wardCre)
+
 })

@@ -1,6 +1,7 @@
 package com.cg.controller.rest;
 
 import com.cg.model.Customer;
+import com.cg.model.dto.CustomerCreDTO;
 import com.cg.model.dto.CustomerReqDTO;
 import com.cg.service.customerService.ICustomerService;
 import com.cg.utils.AppUtils;
@@ -26,22 +27,22 @@ public class CustomerRestController {
         return new ResponseEntity<>(customers, HttpStatus.OK);
     }
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody CustomerReqDTO customerCreReqDTO, BindingResult bindingResult) {
+    public ResponseEntity<?> create(@RequestBody CustomerCreDTO customerCreDTO, BindingResult bindingResult) {
 
-        new CustomerReqDTO().validate(customerCreReqDTO, bindingResult);
+        new CustomerCreDTO().validate(customerCreDTO, bindingResult);
 
         if (bindingResult.hasFieldErrors()) {
             return appUtils.mapErrorToResponse(bindingResult);
         }
 
-        Customer customer = new Customer();
-        customer.setFullName(customerCreReqDTO.getFullName());
-        customer.setEmail(customerCreReqDTO.getEmail());
-        customer.setPhone(customerCreReqDTO.getPhone());
+        Customer customer = customerCreDTO.toCustomer();
+        customer.setFullName(customerCreDTO.getFullName());
+        customer.setEmail(customerCreDTO.getEmail());
+        customer.setPhone(customerCreDTO.getPhone());
         customer.setBalance(BigDecimal.ZERO);
         customer.setDeleted(false);
 
-        customerService.save(customer);
+        customerService.create(customer);
 
         return new ResponseEntity<>(customer, HttpStatus.CREATED);
     }
